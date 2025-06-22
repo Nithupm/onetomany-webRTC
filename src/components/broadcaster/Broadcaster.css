@@ -113,11 +113,6 @@
   flex: 100%;
 }
 
-
-/* .video-column.expand {
-  flex: 2;
-} */
-
 .peers-column {
   flex: 1;
   display: flex;

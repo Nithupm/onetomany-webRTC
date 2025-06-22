@@ -1,111 +1,111 @@
-<!-- # React + Vite
+Project: One-to-Many Video Conference (Frontend Only):
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a frontend-only WebRTC application built using React that allows one user (Broadcaster) to stream their video/audio to multiple other users (Viewers). All signaling is handled manually or via BroadcastChannel for testing in the same browser.
 
-Currently, two official plugins are available:
+Technologies Used:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1.React (Hooks + Functional Components)
+2.WebRTC (RTCPeerConnection API)
+3.BroadcastChannel (for same-device testing)
+4.CSS
 
-## Expanding the ESLint configuration
+How It Works:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project. -->
+This app allows a single broadcaster to send their media stream to multiple viewers using WebRTC. There is no server involved. Instead, users manually copy and paste SDP offer/answer data between each other to establish the connection.
 
-# 🎥 One-to-Many WebRTC Video Conference (Frontend-Only)
+Core Features:
 
-This is a **frontend-only** WebRTC-based video conferencing application built using **React + Vite**, allowing one broadcaster to stream audio/video to multiple viewers.
+1.Broadcaster
 
----
+-Captures the user's camera and mic.
+-Displays the local video stream.
+-On clicking "Add Viewer":
+  -Creates a new peer connection.
+  -Generates and displays an SDP offer.
+  -Copy the offer shown and send it to the viewer by pasting in the sdp offer column .
+-Waits for and accepts an SDP answer from the viewer.
+-Tracks the connection status for each viewer.
+-Can mute/unmute microphone.
+-Can hang up and disconnect from all viewers.
 
-## 🚀 Features
+2.Viewer
 
-- ✅ Core WebRTC implementation (no backend)
-- ✅ Manual signaling via copy-paste of SDP
-- ✅ BroadcastChannel auto-signaling (same device/browser)
-- ✅ One-to-many stream from broadcaster to viewers
-- ✅ Connection status indicators
-- ✅ Full component-based UI with dynamic video list
+-Accepts a pasted SDP offer from the broadcaster.
+-Creates a peer connection and generates an SDP answer.
+-Sends the answer back to the broadcaster (manually or via BroadcastChannel).
+-Displays the broadcaster's video stream.
+-Can mute/unmute microphone.
+-Can hang up the connection.
 
----
+3.Auto Signaling (Local Tabs Only)
 
-## 📁 Folder Structure
+Uses BroadcastChannel to automatically exchange offers and answers between browser tabs on the same device. This is only for testing without manual copy-paste.
 
-```
-webrtc_conference/
-├── public/
-├── src/
-│   ├── components/
-│   │   ├── Broadcaster.jsx
-│   │   ├── Viewer.jsx
-│   └── App.jsx
-├── README.md
-├── package.json
-└── vite.config.js
-```
+Manual Connection Steps
 
----
+Step 1: Broadcaster
 
-## 🧪 How to Run Locally
+1.Visit '/broadcaster'.
+2.Allow camera/mic access.
+3.Click “+” to create a new offer for viewer.
+4.Copy the generated offer and send it to the viewer.
 
-1. **Install dependencies:**
+Step 2: Viewer
 
-```bash
-npm install
-```
+1.Visit '/viewer'.
+2.Paste the offer into the textarea.
+3.Click “Connect”.
+4.Copy the generated answer and send it back to the broadcaster.
 
-2. **Start the dev server:**
+Step 3: Broadcaster
 
-```bash
-npm run dev
-```
+1.Paste the viewer's answer into the corresponding field.
+2 Connection will be established and the stream will appear on the viewer's side.
 
-3. Open **two tabs** at [http://localhost:5173](http://localhost:5173):
-   - Tab 1: Click **"Start as Broadcaster"**
-   - Tab 2: Click **"Join as Viewer"**
+Code Overview
 
----
+Broadcaster.jsx :
 
-## ✍️ Manual SDP Copy-Paste Flow (if auto signaling fails)
+-Uses useEffect to get user media and manage cleanup.
+-Creates a new RTCPeerConnection per viewer.
+-Stores all connections in a useRef map.
+-Tracks offer status, connection state, and handles pasted answers.
 
-1. In Broadcaster tab, click **"Add New Viewer"**
-2. Copy the generated **SDP Offer** and paste it in the **Viewer tab**
-3. Viewer generates an **Answer**, copy and paste it back into the Broadcaster’s input box
-4. Connection should now be established
+Viewer.js :
 
----
+-Accepts an SDP offer, creates a peer connection.
+-Generates an answer and displays it.
+-Shows the remote stream (broadcaster's video).
+-Handles connection state changes and microphone toggling.
 
-## 💡 Bonus: BroadcastChannel Auto Signaling
+App.js :
 
-- Works across **multiple tabs** in the **same browser**
-- Broadcaster sends `offer` via `BroadcastChannel`
-- Viewer auto-generates `answer` and sends back via same channel
-- For real users, copy-paste is still required (no backend allowed)
+-Handles routing between '/', '/broadcaster', and '/viewer'.
 
----
+Cleanup :
 
-## ✅ Implemented Requirements Checklist
+-On hang-up, all peer connections are closed.
+-All media tracks are stopped.
+-UI and state are reset.
 
-| Feature                             | Status       |
-|-------------------------------------|--------------|
-| React + Component-Based UI          | ✅ Done       |
-| Local & Remote `<video>` elements   | ✅ Done       |
-| Manual SDP input/output             | ✅ Done       |
-| One-to-Many WebRTC with `RTCPeerConnection` | ✅ Done |
-| "Start Broadcast", "Connect", "Copy", "Hang Up" buttons | ✅ Done |
-| BroadcastChannel Bonus              | ✅ Done       |
-| Connection Status UI                | ✅ Done       |
-| README Instructions                 | ✅ Done       |
+Limitations :
 
----
+-No backend, no TURN server — P2P connection may fail in some networks.
+-Only one-way video/audio from broadcaster to viewers.
+-Manual signaling unless using tabs on the same machine.
 
-## 🛠️ Tech Stack
+Notes :
 
-- React + Vite
-- WebRTC APIs (RTCPeerConnection, MediaStream)
-- BroadcastChannel API (for same-device signaling)
-- No backend used
+-This is meant for local demos and learning WebRTC.
+-Use real devices/browsers to simulate copy-paste signaling in production.
 
----
+Final Output :
+
+-Fully working WebRTC React app
+-One-to-many broadcasting
+-Manual or tab-based signaling
+-Clear UI with status and controls
+
 
 
 
