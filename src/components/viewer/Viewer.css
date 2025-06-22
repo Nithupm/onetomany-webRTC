@@ -1,52 +1,208 @@
 .container {
-  margin-top: 1rem;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(to bottom right, #f1f5f9, #e2e8f0);
+  font-family: "Segoe UI", sans-serif;
 }
 
-.video {
-  width: 400px;
-  border: 1px solid #ccc;
+.viewer-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 1rem;
 }
 
-.button {
-  margin-top: 1rem;
-  background: crimson;
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  cursor: pointer;
-}
-
-.button.danger {
-  background: crimson;
-}
-
-.label {
-  display: block;
-}
-
-.textarea {
-  width: 100%;
-  height: 100px;
-  margin-top: 0.5rem;
-  padding: 0.5rem;
-}
-
-.status {
-  margin-top: 1rem;
-}
 .viewer-flex-row {
   display: flex;
-  gap: 1.5rem;
-  align-items: flex-start;
   flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1200px;
 }
 
 .video-column {
-  flex: 2;
+  flex: 1 1 700px;
+  max-width: 100%;
+}
+
+.video-card {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  border: 1px solid #d1d5db;
+}
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: black;
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
+}
+
+.styled-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+  background: black;
+}
+
+.floating-controls {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1rem;
+  z-index: 15;
+}
+
+.control-button {
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.control-button:hover {
+  background: #e0e0e0;
+}
+
+.control-button.danger {
+  background: crimson;
+  color: white;
+}
+
+.control-button.danger:hover {
+  background: #b30000;
+}
+
+.viewer-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1.2rem;
+  background: transparent;
+  border-top: 1px solid #e2e8f0;
+}
+
+.circle-button {
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #333;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.circle-button:hover {
+  transform: scale(1.1);
+}
+
+.circle-button.end {
+  background: crimson;
+  color: white;
+}
+
+.circle-button.end:hover {
+  background: #a40000;
 }
 
 .form-column {
-  flex: 1;
+  flex: 1 1 350px;
   display: flex;
   flex-direction: column;
+  gap: 1.2rem;
+  padding: 1.2rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
+  border: 1px solid #d1d5db;
+}
+
+.label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.textarea {
+  width: 93%;
+  height: 50px;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  font-family: "Courier New", monospace;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+
+.button-group {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.button {
+  background: linear-gradient(145deg, #007bff, #0056b3);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.status {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: #ffffff;
+  border-radius: 10px;
+  color: #334155;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.overlay-title {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  margin: 0;
+  padding: 0.3rem 0.6rem;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  z-index: 10;
 }

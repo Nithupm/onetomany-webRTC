@@ -1,0 +1,29 @@
+/* Global Theme Background */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: linear-gradient(135deg, #edf2f7, #f7fafc);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
+  color: #1a202c;
+}
+
+/* Glass Panels */
+.video-card,
+.peer-container {
+  background: rgba(255,255,255,0.9) !important;
+  backdrop-filter: blur(4px) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05) !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Status badge style */
+.status-badge {
+  background-color: #fff3cd !important;
+  color: #856404 !important;
+  padding: 0.4rem 0.8rem !important;
+  border-radius: 999px !important;
+  font-weight: bold !important;
+}

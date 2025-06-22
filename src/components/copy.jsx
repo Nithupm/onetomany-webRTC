@@ -1,37 +1,47 @@
-// import React, { useEffect, useRef, useState } from 'react';
-// import './Broadcaster.css';
+// import { useEffect, useRef, useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import { FiUserPlus, FiMic, FiMicOff, FiPhoneOff } from "react-icons/fi";
+// import "./Broadcaster.css";
 
 // function Broadcaster() {
 //   const [localStream, setLocalStream] = useState(null);
+//   const [micEnabled, setMicEnabled] = useState(true);
 //   const [pendingPeers, setPendingPeers] = useState([]);
 //   const [connectedPeers, setConnectedPeers] = useState([]);
 //   const videoRef = useRef();
 //   const allPeerConnections = useRef({});
 //   const peerIdCounter = useRef(0);
-//   const signalChannel = new BroadcastChannel('webrtc-signal');
+//   const signalChannel = useRef(null);
+//   const navigate = useNavigate();
 
 //   useEffect(() => {
+//     signalChannel.current = new BroadcastChannel("webrtc-signal");
+
+//  signalChannel.current.onmessage = (event) => {
+//   const { type, id: msgId, sdp } = event.data;
+//   if (type === "answer" && allPeerConnections.current[msgId]) {
+//     allPeerConnections.current[msgId]._setRemoteAnswer(sdp);
+//   }
+// };
+
+
 //     const startStream = async () => {
 //       try {
-//         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+//         const stream = await navigator.mediaDevices.getUserMedia({
+//           video: true,
+//           audio: true,
+//         });
 //         setLocalStream(stream);
 //         if (videoRef.current) videoRef.current.srcObject = stream;
 //       } catch (err) {
-//         console.error('Error accessing media devices', err);
+//         console.error("Error accessing media devices", err);
 //       }
-
-//       signalChannel.onmessage = (event) => {
-//         const { type, id, sdp } = event.data;
-//         if (type === 'answer' && allPeerConnections.current[id]) {
-//           allPeerConnections.current[id]._setRemoteAnswer(sdp);
-//         }
-//       };
 //     };
 //     startStream();
 
 //     return () => {
 //       Object.values(allPeerConnections.current).forEach((pc) => pc.close());
-//       signalChannel.close();
+//       signalChannel.current?.close();
 //       localStream?.getTracks().forEach((track) => track.stop());
 //     };
 //   }, []);
@@ -44,9 +54,9 @@
 //     const peerData = {
 //       id,
 //       connection: pc,
-//       offerSDP: '',
-//       answerSDP: '',
-//       status: 'Gathering ICE...',
+//       offerSDP: "",
+//       answerSDP: "",
+//       status: "Gathering ICE...",
 //     };
 
 //     allPeerConnections.current[id] = pc;
@@ -56,10 +66,20 @@
 //         const offerSDP = pc.localDescription;
 //         setPendingPeers((prev) =>
 //           prev.map((peer) =>
-//             peer.id === id ? { ...peer, offerSDP: JSON.stringify(offerSDP, null, 2), status: 'Waiting for Answer' } : peer
+//             peer.id === id
+//               ? {
+//                   ...peer,
+//                   offerSDP: JSON.stringify(offerSDP, null, 2),
+//                   status: "Waiting for Answer",
+//                 }
+//               : peer
 //           )
 //         );
-//         signalChannel.postMessage({ type: 'offer', id, sdp: offerSDP.toJSON() });
+//         signalChannel.current.postMessage({
+//           type: "offer",
+//           id,
+//           sdp: offerSDP.toJSON(),
+//         });
 //       }
 //     };
 
@@ -68,8 +88,11 @@
 //       setPendingPeers((prev) =>
 //         prev.map((peer) => (peer.id === id ? { ...peer, status } : peer))
 //       );
-//       if (status === 'connected') {
-//         setConnectedPeers((prev) => [...prev, id]);
+//       if (status === "connected") {
+//         setConnectedPeers((prev) => (!prev.includes(id) ? [...prev, id] : prev));
+//       }
+//       if (["disconnected", "failed", "closed"].includes(status)) {
+//         setConnectedPeers((prev) => prev.filter((peerId) => peerId !== id));
 //       }
 //     };
 
@@ -77,7 +100,7 @@
 //       try {
 //         await pc.setRemoteDescription(new RTCSessionDescription(answerSDP));
 //       } catch (err) {
-//         console.error('Failed to set remote answer:', err);
+//         console.error("Failed to set remote answer:", err);
 //       }
 //     };
 
@@ -92,7 +115,7 @@
 //       const pc = allPeerConnections.current[id];
 //       pc?._setRemoteAnswer(answerObj);
 //     } catch (err) {
-//       alert('Invalid SDP format');
+//       alert("Invalid SDP format");
 //     }
 //   };
 
@@ -104,45 +127,67 @@
 //     if (videoRef.current) videoRef.current.srcObject = null;
 //     localStream?.getTracks().forEach((track) => track.stop());
 //     setLocalStream(null);
-//     alert('Disconnected all viewers.');
+//     navigate("/");
+//   };
+
+//   const toggleMic = () => {
+//     const audioTrack = localStream?.getAudioTracks()[0];
+//     if (audioTrack) {
+//       audioTrack.enabled = !audioTrack.enabled;
+//       setMicEnabled(audioTrack.enabled);
+//     }
 //   };
 
 //   return (
 //     <div className="container">
-//       <div className="grid-container">
-//         <div className="video-card">
-//           <div className="video-wrapper">
-//             <h2 className="overlay-title">Broadcaster</h2>
-//             <video ref={videoRef} className="styled-video" autoPlay muted playsInline />
+//       <div className="broadcaster-flex-row">
+//         <div className="video-column">
+//           <div className="video-card">
+//             <div className="video-wrapper">
+//               <h2 className="overlay-title">Broadcaster</h2>
+//               <video ref={videoRef} className="styled-video" autoPlay playsInline muted />
+//               <div className="floating-controls">
+//                 <button className="control-button" onClick={createOfferForViewer}>
+//                   <FiUserPlus />
+//                 </button>
+//                 <button className="control-button" onClick={toggleMic}>
+//                   {micEnabled ? <FiMic /> : <FiMicOff />}
+//                 </button>
+//                 <button className="control-button danger" onClick={handleHangUp}>
+//                   <FiPhoneOff />
+//                 </button>
+//               </div>
+//             </div>
 //           </div>
 //         </div>
-//         {connectedPeers.map((id) => (
-//           <div key={id} className="video-card">
-//             <h4 className="video-title">{id}</h4>
-//             <p>Status: Connected</p>
-//             <p>Receiving stream...</p>
+        
+//         <div className="peers-column-wrapper">
+//         {pendingPeers.filter(peer => peer.status !== "connected").map((peer) => (
+//           <div className="peer-container" key={peer.id}>
+//             <h4>
+//               {peer.id}
+//               <span className={`status-badge ${peer.status === "connected" ? "connected" : "waiting"}`}>
+//                 {peer.status === "connected" ? "Connected" : "Waiting for Answer"}
+//               </span>
+//             </h4>
+
+//             <label className="label">Offer (Send to Viewer):</label>
+//             <textarea className="text-area" readOnly value={peer.offerSDP} />
+//             <button className="button" onClick={() => navigator.clipboard.writeText(peer.offerSDP)}>
+//               Copy Offer
+//             </button>
+
+//             <label className="label">Paste Viewer’s Answer:</label>
+//             <textarea
+//               className="text-area"
+//               placeholder="Paste answer SDP"
+//               onBlur={(e) => handlePasteAnswer(peer.id, e.target.value)}
+//             />
 //           </div>
 //         ))}
 //       </div>
-//       <div>
-//         <button className="button" onClick={createOfferForViewer}>Add New Viewer</button>
-//         <button className="button danger" onClick={handleHangUp}>Hang Up All</button>
-//       </div>
-//       {pendingPeers.map((peer) => (
-//         <div className="peer-container" key={peer.id}>
-//           <h4>{peer.id} — {peer.status}</h4>
-//           <label className="label">Offer (Send to Viewer):</label>
-//           <textarea className="text-area" readOnly value={peer.offerSDP} />
-//           <button className="button" onClick={() => navigator.clipboard.writeText(peer.offerSDP)}>Copy Offer</button>
-//           <label className="label">Paste Viewer’s Answer:</label>
-//           <textarea
-//             className="text-area"
-//             placeholder="Paste answer SDP"
-//             onBlur={(e) => handlePasteAnswer(peer.id, e.target.value)}
-//           />
-//         </div>
-//       ))}
 //       <p className="status">Connected Viewers: {connectedPeers.length}</p>
+//     </div>
 //     </div>
 //   );
 // }
