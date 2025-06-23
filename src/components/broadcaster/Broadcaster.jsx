@@ -146,7 +146,6 @@ await pc.setLocalDescription(offer);
 const handlePasteAnswer = (id, sdp) => {
 try {
 if (usedOfferIds.current.has(id)) {
-// alert("This offer has already been used.");
 Swal.fire({
   icon: 'error',
   text: 'This offer has already been used',
