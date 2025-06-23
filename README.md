@@ -19,10 +19,11 @@ Core Features:
 
 -Captures the user's camera and mic.
 -Displays the local video stream.
+-click add icon in the video screen for adding viewer. for every viewer the add icon should be clicked to generate the SDP offer. 
 -On clicking "Add Viewer":
   -Creates a new peer connection.
   -Generates and displays an SDP offer.
-  -Copy the offer shown and send it to the viewer by pasting in the sdp offer column .
+  -Copy the offer shown and send it to the viewer by pasting in the sdp offer column in the viewer component .
 -Waits for and accepts an SDP answer from the viewer.
 -Tracks the connection status for each viewer.
 -Can mute/unmute microphone.
