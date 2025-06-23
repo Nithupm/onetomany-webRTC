@@ -214,52 +214,57 @@ return (
 
       {/* Offer/Answer exchange part */}
       <div className="peers-column-wrapper">
-         {pendingPeers
-         .filter((peer) => {
-         if (peer.status !== "connected") return true;
-         return Date.now() - (peer.connectedAt || 0) < 2000;
-         })
-         .map((peer) => (
-         <div className="peer-container" key={peer.id}>
-            <h4>
-               {peer.id}
-               <span
-               className={`status-badge ${
-               peer.status === "connected" ? "connected" : "waiting"
-               }`}
-               >
-               {peer.status === "connected"
-               ? "Connected"
-               : "Waiting for Answer"}
-               </span>
-            </h4>
-            <label className="label">Offer (Send to Viewer):</label>
-            <textarea className="text-area" readOnly value={peer.offerSDP} />
-            <button
-               className="button"
-               disabled={copiedOffers[peer.id]}
-               onClick={() => {
-            navigator.clipboard.writeText(peer.offerSDP);
-            setCopiedOffers((prev) => ({ ...prev, [peer.id]: true }));
-            }}
-            >
-            {copiedOffers[peer.id] ? "Copied" : "Copy Offer"}
-            </button>
-            <label className="label">Paste Viewer’s Answer:</label>
-            <textarea
-               className="text-area"
-               placeholder="Paste answer SDP"
-               onBlur={(e) =>
-            handlePasteAnswer(peer.id, e.target.value)}
-            />
-            <button
-               className="button"
-               >
-            Done
-            </button>
-         </div>
-         ))}
+      {pendingPeers.filter((peer) => {
+      if (peer.status !== "connected") return true;
+      return Date.now() - (peer.connectedAt || 0) < 2000;
+      }).length === 0 ? (
+      <div className="peer-container">
+      <h4>please click the add button for adding viewers</h4>
       </div>
+      ) : (
+      pendingPeers
+      .filter((peer) => {
+        if (peer.status !== "connected") return true;
+        return Date.now() - (peer.connectedAt || 0) < 2000;
+      })
+      .map((peer) => (
+        <div className="peer-container" key={peer.id}>
+          <h4>
+            {peer.id}
+            <span
+              className={`status-badge ${
+                peer.status === "connected" ? "connected" : "waiting"
+              }`}
+            >
+              {peer.status === "connected"
+                ? "Connected"
+                : "Waiting for Answer"}
+            </span>
+          </h4>
+          <label className="label">Offer (Send to Viewer):</label>
+          <textarea className="text-area" readOnly value={peer.offerSDP} />
+          <button
+            className="button"
+            disabled={copiedOffers[peer.id]}
+            onClick={() => {
+              navigator.clipboard.writeText(peer.offerSDP);
+              setCopiedOffers((prev) => ({ ...prev, [peer.id]: true }));
+            }}
+          >
+            {copiedOffers[peer.id] ? "Copied" : "Copy Offer"}
+          </button>
+          <label className="label">Paste Viewer’s Answer:</label>
+          <textarea
+            className="text-area"
+            placeholder="Paste answer SDP"
+            onBlur={(e) => handlePasteAnswer(peer.id, e.target.value)}
+          />
+          <button className="button">Done</button>
+        </div>
+      ))
+  )}
+</div>
+
    </div>
    <p className="status">Connected Viewers: {connectedPeers.length}</p>
 </div>
