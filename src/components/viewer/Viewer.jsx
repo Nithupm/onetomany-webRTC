@@ -138,7 +138,6 @@ return (
                   className="styled-video"
                   autoPlay
                   playsInline
-                  muted
                   />
                <div className="floating-controls">
                   <button
