@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Viewer.css";
 import { FaMicrophone, FaMicrophoneSlash, FaPhoneSlash } from "react-icons/fa";
+import Swal from 'sweetalert2';
+
 
 function Viewer() {
 const [offerSDP, setOfferSDP] = useState("");
@@ -82,7 +84,12 @@ pc.onconnectionstatechange = () => {
 setConnectionStatus(pc.connectionState);
 };
 } catch (err) {
-alert("Invalid Offer SDP");
+Swal.fire({
+  icon: 'error',
+  title: 'Oops...',
+  text: 'Invalid Offer SDP',
+});
+
 console.error(err);
 }
 };
@@ -110,7 +117,10 @@ videoRef.current.srcObject = null;
 setOfferSDP("");
 setAnswerSDP("");
 setConnectionStatus("Disconnected");
-alert("Disconnected from broadcaster.");
+Swal.fire({
+  icon: 'info',
+  text: 'Disconnected from broadcaster.',
+});
 navigate("/");
 };
 

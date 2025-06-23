@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiUserPlus, FiMic, FiMicOff, FiPhoneOff } from "react-icons/fi";
 import "./Broadcaster.css";
+import Swal from 'sweetalert2';
 
 function Broadcaster() {
 const [localStream, setLocalStream] = useState(null);
@@ -145,7 +146,11 @@ await pc.setLocalDescription(offer);
 const handlePasteAnswer = (id, sdp) => {
 try {
 if (usedOfferIds.current.has(id)) {
-alert("This offer has already been used.");
+// alert("This offer has already been used.");
+Swal.fire({
+  icon: 'error',
+  text: 'This offer has already been used',
+});
 return;
 }
 
@@ -154,7 +159,11 @@ const pc = allPeerConnections.current[id];
 pc?._setRemoteAnswer(answerObj);
 usedOfferIds.current.add(id);
 } catch (err) {
-alert("Invalid SDP format");
+Swal.fire({
+  icon: 'error',
+  text: 'Invalid SDP format',
+});
+
 }
 };
 
